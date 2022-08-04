@@ -5,5 +5,6 @@ var CurrentConf AppConfig
 
 //AppConfig App配置
 type AppConfig struct {
-	Debug bool `mapstructure:"debug"`
+	Debug             bool   `mapstructure:"debug"`
+	ConfigurationName string `mapstructure:"configuration_name"`
 }

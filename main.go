@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"bufio"
 	"os"
 
-	"github.com/ShangRui-hashy/send-to-burp/config"
+	"github.com/ShangRui-hash/send2burp/burpapi"
+	"github.com/ShangRui-hash/send2burp/config"
 	"github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"
 )
@@ -30,6 +31,13 @@ func main() {
 				Value:       false,
 				Destination: &config.CurrentConf.Debug,
 			},
+			&cli.StringFlag{
+				Name:        "configuration_name",
+				Aliases:     []string{"cn"},
+				Usage:       "configuration name",
+				Value:       "Crawl and Audit - Lightweight",
+				Destination: &config.CurrentConf.ConfigurationName,
+			},
 		},
 		Action: run,
 	}
@@ -40,6 +48,15 @@ func main() {
 }
 
 func run(c *cli.Context) (err error) {
-	fmt.Println("Send-To-Burp")
+	//从标准输入中读
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		//获取输入的内容
+		url := scanner.Text()
+		//发送到burp
+		if err := burpapi.Scan(url, config.CurrentConf.ConfigurationName); err != nil {
+			logrus.Error("burpapi.Scan failed,err:", err)
+		}
+	}
 	return nil
 }
